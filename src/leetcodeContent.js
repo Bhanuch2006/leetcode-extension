@@ -3,10 +3,14 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   if (request.type === 'SCRAPE_QUESTION') {
     const slug = getQuestionSlugFromURL();    
     const question = await fetchLeetCodeProblem(slug);  
-    console.log(question);
+    const prompt = `Give a 3 hints point wise for this LeetCode problem:\nTitle: ${question.title}\nDescription: ${question.content}. The first hint should be a bit subtle. Second hint should tell a bit more and third hint should almost give way. The hint should be of two lines maximum`;
+    const completion = await getGeminiCompletion(prompt);
+    console.log(completion);
     
   }
 });
+
+
 
 function getQuestionSlugFromURL() {
   const url = window.location.href; 
@@ -40,5 +44,29 @@ async function fetchLeetCodeProblem(titleSlug) {
   });
   const data = await response.json();
   return data.data.question;
+}
+
+//gemini
+async function getGeminiCompletion(prompt) {
+  const apiKey = ""; 
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const payload = {
+    contents: [{
+      parts: [{ text: prompt }]
+    }]
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  // Extract response text
+  return (
+    data.candidates?.[0]?.content?.parts?.[0]?.text ||
+    "No response from Gemini API"
+  );
 }
 
