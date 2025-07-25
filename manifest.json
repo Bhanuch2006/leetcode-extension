@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "DebugMate",
+  "version": "1.0",
+  "description": "A simple Chrome extension to demonstrate functionality.",
+  
+  "permissions": ["storage", "tabs","activeTab"],
+  "host_permissions": ["https://leetcode.com/*"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+  {
+    "matches": ["https://leetcode.com/problems/*"],
+    "js": ["src/leetcodeContent.js"],
+    "type": "module"
+  }
+],
+  "action": {
+    "default_icon": {
+      "16": "./assets/icon.png",
+      "24": "./assets/icon.png",
+      "32": "./assets/icon.png"
+    },
+    "default_title": "Your DebugMate",
+    "default_popup": "src/ui/popup.html"
+  }
+}
