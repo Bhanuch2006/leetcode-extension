@@ -1,0 +1,18 @@
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        popup: 'src/ui/popup.js',
+        leetcodecontent: 'src/leetcodeContent.js',
+        
+      },
+      output: {
+        entryFileNames: 'name.js',  
+      }
+    },
+    outDir: 'dist',
+    emptyOutDir: true,
+  }
+});

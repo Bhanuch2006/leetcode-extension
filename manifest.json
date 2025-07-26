@@ -13,7 +13,7 @@
   
 
   "background": {
-    "service_worker": "src/background.js",
+    "service_worker": "dist/name2.js",
     "type": "module"
   },
   "content_scripts": [
@@ -22,19 +22,20 @@
     "js": ["src/leetcodeContent.js"],
     "type": "module"
   }
-],
-"web_accessible_resources": [
-  {
-    "resources": ["inject.js"],
-    "matches": ["https://leetcode.com/*"]
-  }
-],
-"icons": {
-    "16": "assets/icon.png",
-    "24": "assets/icon.png",
-    "32": "assets/icon.png",
-    "48": "assets/icon.png",
-    "128": "assets/icon.png"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["https://leetcode.com/*"]
+    }
+  ],
+  "icons": {
+      "16": "assets/icon.png",
+      "24": "assets/icon.png",
+      "32": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
   },
   "action": {
     "default_icon": {
