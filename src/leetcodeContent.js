@@ -88,3 +88,32 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 });
 
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "GET_LEETCODE_CODE") {
+    const script = document.createElement('script');
+    script.src = chrome.runtime.getURL('inject.js');
+    document.documentElement.appendChild(script);
+
+    async function handleMessage(event) {
+      if (event.source !== window) return; // only accept messages from same window
+      if (event.data && event.data.type === "LEETCODE_CODE_EXTRACTED") {
+        const slug = getQuestionSlugFromURL();
+        const question = await fetchLeetCodeProblem(slug);
+        const prompt = `Given below is the implementation of the leetcode problemdone by the user. There are most likely logical error in it 
+        In one short paragraph explain the errors that you think are possible regarding logical errors
+        ${event.data.code}
+
+            For the following problem: Title: ${question.title} \nDescription: ${question.content}`;
+        
+        const completion = await getGeminiCompletion(prompt);
+        
+        window.removeEventListener("message", handleMessage);
+        sendResponse({ code: completion || "" });
+      }
+    }
+    
+    window.addEventListener("message", handleMessage);
+
+    return true;  // IMPORTANT: keep message channel open for async sendResponse
+  }
+});

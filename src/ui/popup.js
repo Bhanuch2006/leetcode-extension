@@ -33,6 +33,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
     });
 
+    document.getElementById('errorButton').addEventListener("click", () => {
+        const errorContainer = document.getElementById("errorContainer");
+        errorContainer.innerHTML = '<p class="info">Generating Error :)</p>';
+
+        chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+            chrome.tabs.sendMessage(tab.id, { type: "GET_LEETCODE_CODE" }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Message send error:", chrome.runtime.lastError);
+                errorContainer.innerHTML = `<p class="error">Error: ${chrome.runtime.lastError.message}</p>`;
+                return;
+            }
+            console.log("[Popup] LeetCode code:", response.code);
+            errorContainer.innerHTML = `<p class="info">Errors: ${response.code} </p>` ;
+            });
+        });
+    });
+
+
     
 
   } else {
