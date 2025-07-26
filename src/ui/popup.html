@@ -72,9 +72,25 @@
         color: #bbb;
         font-size: 14px;
       }
+
+       #userWelcome {
+        font-size: 14px;
+        margin-top: 8px;
+        color: #aaa;
+        display: none;
+      }
+
+      #signInBtn {
+        margin-bottom: 10px;
+      }
     </style>
   </head>
   <body>
+      <!-- ✨ Sign-In Area -->
+    <button id="signInBtn">🔐 Sign in with Google</button>
+    <div id="userWelcome">👋 Welcome, <span id="userName"></span>!</div>
+    <br />
+    <button id="logoutBtn" style="display: none">🚪 Log Out</button>
     <div id="hintSection">
       <h2>LeetCode Hint</h2>
       <button id="hintButton">💡 Get Hint</button>

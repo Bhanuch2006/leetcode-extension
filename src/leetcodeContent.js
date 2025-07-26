@@ -78,7 +78,7 @@ For the following problem: Title: ${question.title} \nDescription: ${question.co
         const completion = await getGeminiCompletion(prompt);
         console.log(completion);
 
-        // ✅ Save prompt and response to Chrome synced storage
+        
         chrome.storage.sync.set({
           lastPrompt: prompt,
           lastResponse: completion,
@@ -88,14 +88,14 @@ For the following problem: Title: ${question.title} \nDescription: ${question.co
           console.log("Prompt and response saved to chrome.storage.sync");
         });
 
-        sendResponse({ hints: completion }); // ✅ Send response back to popup.js
+        sendResponse({ hints: completion }); 
       } catch (error) {
         console.error("Error in SCRAPE_QUESTION:", error);
         sendResponse({ hints: "❌ Error generating hints." });
       }
     })();
 
-    return true; // ✅ Keep port open for async sendResponse
+    return true; 
   }
 });
 
@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         const slug = getQuestionSlugFromURL();
         const question = await fetchLeetCodeProblem(slug);
         const prompt = `Given below is the implementation of the leetcode problemdone by the user. There are most likely logical error in it 
-        In one short paragraph explain the errors that you think are possible regarding logical errors
+        In one short paragraph explain the errors as a computer science fellow student, in proper grammer and in short way that you think are possible regarding logical errors with no text formating including no bold
         ${event.data.code}
 
             For the following problem: Title: ${question.title} \nDescription: ${question.content}`;
