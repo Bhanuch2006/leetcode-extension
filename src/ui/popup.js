@@ -116,11 +116,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const data = await response.json();
         console.log("API response data:", data);
+        const points = 1 * data.easySolved + (3*data.mediumSolved) + (7*data.hardSolved);
+        
         // Show relevant info in UI here, e.g.
         profileDetails.innerHTML = `
         👤 <strong>${username}</strong><br/>
         🧩 Solved: ${data.totalSolved}/${data.totalQuestions}<br/>
-        🏆 Ranking: #${data.ranking}
+        🏆 Ranking: #${data.ranking}<br/>
+        Your Points: ${points}
         `;
     } catch (err) {
         console.error("Error fetching profile:", err);

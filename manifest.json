@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "DebugMate",
+  "name": "Let's Leet",
   "version": "1.0",
   "description": "A simple Chrome extension to demonstrate functionality.",
   
@@ -32,17 +32,16 @@
     }
   ],
   "icons": {
-      "16": "assets/icon.png",
-      "24": "assets/icon.png",
-      "32": "assets/icon.png",
-      "48": "assets/icon.png",
-      "128": "assets/icon.png"
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
   },
+
   "action": {
     "default_icon": {
-      "16": "assets/icon.png",
-      "24": "assets/icon.png",
-      "32": "assets/icon.png"
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
     },
     "default_title": "Your DebugMate",
     "default_popup": "src/ui/popup.html"
