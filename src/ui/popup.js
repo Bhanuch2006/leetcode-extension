@@ -6,9 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-  const isLeetCodeProblem = tab.url.startsWith(
-    "https://leetcode.com/problems/"
-  );
+  const isLeetCodeProblem = tab.url.startsWith("https://leetcode.com/problems/");
 
   if (isLeetCodeProblem) {
     hintSection.style.display = "block";
@@ -20,11 +18,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         { type: "SCRAPE_QUESTION" },
         (response) => {
           if (chrome.runtime.lastError) {
-            hintBox.textContent =
-              "❌ Error: " + chrome.runtime.lastError.message;
+            
+            
+            hintBox.textContent = "❌ Error: " + chrome.runtime.lastError.message;
             return;
           }
-
           if (response && response.hints) {
             hintBox.textContent = response.hints;
           } else {
@@ -33,20 +31,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       );
     });
+
+    
+
   } else {
     notProblemSection.style.display = "block";
   }
 });
 
-chrome.tabs.sendMessage(tab.id, { type: "SCRAPE_QUESTION" }, (response) => {
-  if (chrome.runtime.lastError) {
-    hintBox.textContent = "❌ Error: " + chrome.runtime.lastError.message;
-    return;
-  }
-
-  if (response && response.hints) {
-    hintBox.textContent = response.hints;
-  } else {
-    hintBox.textContent = "⚠️ No hints found for this problem.";
-  }
-});

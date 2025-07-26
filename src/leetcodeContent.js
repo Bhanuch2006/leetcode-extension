@@ -1,17 +1,3 @@
-
-chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
-  if (request.type === 'SCRAPE_QUESTION') {
-    const slug = getQuestionSlugFromURL();    
-    const question = await fetchLeetCodeProblem(slug);  
-    const prompt = `Give a 3 hints point wise for this LeetCode problem:\nTitle: ${question.title}\nDescription: ${question.content}. The first hint should be a bit subtle. Second hint should tell a bit more and third hint should almost give way. The hint should be of two lines maximum`;
-    const completion = await getGeminiCompletion(prompt);
-    console.log(completion);
-    
-  }
-});
-
-
-
 function getQuestionSlugFromURL() {
   const url = window.location.href; 
   const match = url.match(/leetcode\.com\/problems\/([^\/]+)/);
@@ -80,7 +66,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const prompt = `Give 3 hints point wise for this LeetCode problem:\nTitle: ${question.title}\nDescription: ${question.content}. The first hint should be a bit subtle. Second hint should tell a bit more and third hint should almost give way. Each hint should be a maximum of two lines.`;
 
         const completion = await getGeminiCompletion(prompt);
-
+        console.log(completion);
+        
         sendResponse({ hints: completion }); // ✅ Send response back to popup.js
       } catch (error) {
         sendResponse({ hints: "❌ Error generating hints." });
