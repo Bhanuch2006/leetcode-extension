@@ -12,6 +12,9 @@
         width: 320px;
         background-color: #1e1e2f;
         color: #ffffff;
+        border-radius: 16px; /* ✅ Rounded corners */
+        overflow: hidden; /* ✅ Prevent scrollbars at edges */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Optional: soft shadow */
       }
 
       h2 {
@@ -30,19 +33,34 @@
         cursor: pointer;
         transition: background 0.3s ease;
         margin-top: 10px;
+        width: 100%;
       }
 
       button:hover {
         background: linear-gradient(90deg, #e52e71, #ff8a00);
       }
 
-      #hintBox {
+      .hint-container {
         margin-top: 15px;
-        padding: 10px;
+      }
+
+      details {
         background-color: #2e2e3f;
         border-radius: 8px;
-        white-space: pre-wrap;
         border: 1px solid #444;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        color: #ddd;
+      }
+
+      summary {
+        font-weight: bold;
+        cursor: pointer;
+        outline: none;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
       }
 
       #hintSection,
@@ -60,11 +78,19 @@
     <div id="hintSection">
       <h2>LeetCode Hint</h2>
       <button id="hintButton">💡 Get Hint</button>
-      <div id="hintBox" class="info">Click the button to get hints...</div>
+      <div id="hintContainer" class="hint-container"></div>
     </div>
 
     <div id="notProblemSection">
       <h2>⚠️ Not a Problem Page</h2>
+      <br />
+      <img
+        src="../../assets/not-found.png"
+        alt="Not a problem page"
+        width="120"
+        style="display: block; margin: 10px auto; border-radius: 8px"
+      />
+      <br />
       <p class="info">Please open a LeetCode problem page and try again.</p>
     </div>
 

@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const hintSection = document.getElementById("hintSection");
   const notProblemSection = document.getElementById("notProblemSection");
-  const hintBox = document.getElementById("hintBox");
   const hintButton = document.getElementById("hintButton");
+  const hintContainer = document.getElementById("hintContainer");
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -12,21 +12,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     hintSection.style.display = "block";
 
     hintButton.addEventListener("click", () => {
-      hintBox.textContent = "⏳ Generating hints, please wait...";
+      hintContainer.innerHTML = `<p class="info">⏳ Generating hints, please wait...</p>`;
+
       chrome.tabs.sendMessage(
         tab.id,
         { type: "SCRAPE_QUESTION" },
         (response) => {
           if (chrome.runtime.lastError) {
-            
-            
-            hintBox.textContent = "❌ Error: " + chrome.runtime.lastError.message;
+            hintContainer.innerHTML = `<p class="info">❌ Error: ${chrome.runtime.lastError.message}</p>`;
             return;
           }
+
           if (response && response.hints) {
-            hintBox.textContent = response.hints;
+            const hints = parseHintsByMarkers(response.hints);
+            renderHints(hints);
           } else {
-            hintBox.textContent = "⚠️ No hints found for this problem.";
+            hintContainer.innerHTML = `<p class="info">⚠️ No hints found.</p>`;
           }
         }
       );
@@ -36,6 +37,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   } else {
     notProblemSection.style.display = "block";
+  }
+  function parseHintsByMarkers(text) {
+    const parts = text
+      .split(/##\s*Hint\s*\d\s*##/i)
+      .map((p) => p.trim())
+      .filter((p) => p);
+    return parts.slice(0, 3); // Ensure max 3
+  }
+
+  function renderHints(hints) {
+    hintContainer.innerHTML = ""; // Clear loading
+    hints.forEach((hint, index) => {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = `Hint ${index + 1}`;
+      const content = document.createElement("div");
+      content.textContent = hint;
+      details.appendChild(summary);
+      details.appendChild(content);
+      hintContainer.appendChild(details);
+    });
   }
 });
 
