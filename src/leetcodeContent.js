@@ -64,22 +64,33 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const question = await fetchLeetCodeProblem(slug);
 
         const prompt = `Give exactly 3 easily readable with no text formatting no bold , hints formatted like this:
-            ## Hint 1 ##
-              <text>
+## Hint 1 ##
+<text>
 
-            ## Hint 2 ##
-              <text>
+## Hint 2 ##
+<text>
 
-            ## Hint 3 ##
-              <text>
+## Hint 3 ##
+<text>
 
-            For the following problem: Title: ${question.title} \nDescription: ${question.content}`;
+For the following problem: Title: ${question.title} \nDescription: ${question.content}`;
 
         const completion = await getGeminiCompletion(prompt);
         console.log(completion);
-        
+
+        // ✅ Save prompt and response to Chrome synced storage
+        chrome.storage.sync.set({
+          lastPrompt: prompt,
+          lastResponse: completion,
+          lastProblemSlug: slug,
+          lastProblemTitle: question.title
+        }, () => {
+          console.log("Prompt and response saved to chrome.storage.sync");
+        });
+
         sendResponse({ hints: completion }); // ✅ Send response back to popup.js
       } catch (error) {
+        console.error("Error in SCRAPE_QUESTION:", error);
         sendResponse({ hints: "❌ Error generating hints." });
       }
     })();
@@ -87,4 +98,5 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     return true; // ✅ Keep port open for async sendResponse
   }
 });
+
 
