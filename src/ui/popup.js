@@ -3,69 +3,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const notProblemSection = document.getElementById("notProblemSection");
   const hintButton = document.getElementById("hintButton");
   const hintContainer = document.getElementById("hintContainer");
-  const signInBtn = document.getElementById("signInBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const userWelcome = document.getElementById("userWelcome");
-  const userNameSpan = document.getElementById("userName");
-
-  const savedUser = JSON.parse(localStorage.getItem("debugmateUser"));
-  if (savedUser) {
-    userNameSpan.textContent = savedUser.name;
-    userWelcome.style.display = "block";
-    signInBtn.style.display = "none";
-    logoutBtn.style.display = "inline-block"; // ✅ Show logout if user found
-  }
-
-  // Sign-In Handler
-  signInBtn.addEventListener("click", () => {
-    chrome.identity.getAuthToken({ interactive: true }, function (token) {
-      if (chrome.runtime.lastError || !token) {
-        
-        console.log("chrome.runtime.lastError");
-        
-        alert("Sign-in failed");
-        return;
-      }
-
-      fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-        headers: { Authorization: "Bearer " + token },
-      })
-        .then((res) => res.json())
-        .then((user) => {
-          console.log("✅ Signed in user:", user);
-          userNameSpan.textContent = user.name;
-          userWelcome.style.display = "block";
-          signInBtn.style.display = "none";
-          logoutBtn.style.display = "inline-block"; // ✅ Show logout
-
-          localStorage.setItem("debugmateUser", JSON.stringify(user));
-        });
-    });
-  });
-
-  // 🚪 Logout Handler
-  logoutBtn.addEventListener("click", () => {
-    chrome.identity.getAuthToken({ interactive: false }, function (token) {
-      if (token) {
-        chrome.identity.removeCachedAuthToken({ token }, () => {
-          localStorage.removeItem("debugmateUser");
-          resetUI();
-          //alert("Logged out successfully.");
-        });
-      } else {
-        localStorage.removeItem("debugmateUser");
-        resetUI();
-      }
-    });
-  });
-
-  // Helper to reset UI on logout
-  function resetUI() {
-    signInBtn.style.display = "inline-block";
-    userWelcome.style.display = "none";
-    logoutBtn.style.display = "none";
-    userNameSpan.textContent = "";
-  }
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 

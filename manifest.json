@@ -4,19 +4,13 @@
   "version": "1.0",
   "description": "A simple Chrome extension to demonstrate functionality.",
   
-  "permissions": ["storage", "tabs","activeTab","scripting","identity"],
+  "permissions": ["storage", "tabs","activeTab","scripting"],
   "host_permissions": [
     "https://leetcode.com/*",
     "https://generativelanguage.googleapis.com/*",
     "https://www.googleapis.com/*"
   ],
-   "oauth2": {
-    "client_id": "721213448513-rop5jf5gqvrf4e7gcd6m7jur1qm1mect.apps.googleusercontent.com",
-    "scopes": [
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/userinfo.email"
-    ]
-  },
+  
 
   "background": {
     "service_worker": "src/background.js",
