@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { doc, getDoc,setDoc } from "firebase/firestore";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -30,9 +30,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const profileDetails = document.getElementById("profileDetails");
     const usernameSection = document.getElementById("leetcodeUsernameSection");
     const codeSection = document.getElementById("codeSection");
+    const leaderboardBtn = document.getElementById("leaderboardBtn");
+    if (leaderboardBtn) leaderboardBtn.style.display = "none"; // hide by default
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const docRef = await addDoc(collection(db, "test"), { msg: "Hello from extension!" });    
     const isLeetCodeProblem = tab.url.startsWith("https://leetcode.com/problems/");
 
     chrome.storage.sync.get(["leetcodeUsername"], (data) => {
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Hide input, show profile
             usernameSection.style.display = "none";
             profileContainer.style.display = "block";
+            if (leaderboardBtn) leaderboardBtn.style.display = "block";
         }
     });
     const leetInput = document.getElementById("leetcodeUsernameInput");
@@ -54,48 +56,78 @@ document.addEventListener("DOMContentLoaded", async () => {
         leetInput.style.boxShadow = "none";
     });
 
-    // On Save button click
-    saveBtn.addEventListener("click", () => {
+    // On Save button click, Profile gets saved
+    saveBtn.addEventListener("click", async () => {
         const username = usernameInput.value.trim();
-        console.log("LeetCode Username saved:", username); // ✅ Console log here
+        console.log("LeetCode Username saved:", username); 
+        const userDocRef = doc(db, "users", username);
+        const docSnap = await getDoc(userDocRef);
+        if(!docSnap.exists()){
+            await setDoc(userDocRef, {
+            friends: [],
+            // other fields you want to add...
+            }); 
+        }
+          
+
         if (username.length > 0) {
         chrome.storage.sync.set({ leetcodeUsername: username }, () => {
             usernameSection.style.display = "none";
             profileContainer.style.display = "block";
+            if (leaderboardBtn) leaderboardBtn.style.display = "block";
             profileDetails.innerHTML = ""; // clear previous data
         });
         }
     });
 
+    document.getElementById("leaderboardBtn").addEventListener("click", () => {
+      window.location.href = "leaderboard.html";
+    });
+
+
     // On Profile button click
     profileBtn.addEventListener("click", async () => {
-        chrome.storage.sync.get("leetcodeUsername", async (data) => {
-        const username = data.leetcodeUsername;
-        if (!username) return;
-
-        profileDetails.innerHTML = "⏳ Fetching profile...";
-        try {
-            const res = await fetch(
-          `https://leetcode-stats-api.herokuapp.com/${username}`
-            );
-            const info = await res.json();
-
-            if (info.status === "error") {
-            profileDetails.innerHTML = "❌ Could not fetch profile.";
-            } else {
-            profileDetails.innerHTML = `
-            👤 <strong>${info.username}</strong><br/>
-            🧩 Problems Solved: ${info.totalSolved}/${info.totalQuestions}<br/>
-            🏆 Ranking: #${info.ranking}<br/>
-            🌟 Easy: ${info.easySolved}, Medium: ${info.mediumSolved}, Hard: ${info.hardSolved}
-            `;
-            }
-        } catch (err) {
-            console.error("Error fetching profile:", err);
-            profileDetails.innerHTML = "❌ Error loading profile.";
+        
+  // Use Promise wrapper for chrome.storage.sync.get
+        function getLeetCodeUsername() {
+            return new Promise((resolve) => {
+                chrome.storage.sync.get("leetcodeUsername", (result) => {
+                    resolve(result.leetcodeUsername);
+                });
+            });
         }
-        });
-    });
+
+        const username = await getLeetCodeUsername();
+        if (!username) {
+            profileDetails.innerHTML = "❌ No username saved.";
+            return;
+        }
+        
+        
+    profileDetails.innerHTML = "⏳ Fetching profile...";
+    try {
+        
+        
+        const response = await fetch(`https://leetcode-stats-api.herokuapp.com/${encodeURIComponent(username)}`);
+        if (!response.ok) {
+        throw new Error("Network response was not ok");
+        }
+        
+
+        const data = await response.json();
+        console.log("API response data:", data);
+        // Show relevant info in UI here, e.g.
+        profileDetails.innerHTML = `
+        👤 <strong>${username}</strong><br/>
+        🧩 Solved: ${data.totalSolved}/${data.totalQuestions}<br/>
+        🏆 Ranking: #${data.ranking}
+        `;
+    } catch (err) {
+        console.error("Error fetching profile:", err);
+        profileDetails.innerHTML = "❌ Error loading profile.";
+    }
+});
+
 
   document.getElementById("logoutBtn").addEventListener("click", () => {
     chrome.storage.sync.remove("leetcodeUsername", () => {
@@ -103,9 +135,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       usernameInput.value = "";
       usernameSection.style.display = "block";
       profileContainer.style.display = "none";
+      if (leaderboardBtn) leaderboardBtn.style.display = "none";
       profileDetails.innerHTML = "";
     });
   });
+
 
   
 
@@ -177,6 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     usernameSection.style.display = "none";
     codeSection.style.display = "none";
     profileContainer.style.display = "none";
+    if (leaderboardBtn) leaderboardBtn.style.display = "none";
   }
   function parseHintsByMarkers(text) {
     const parts = text

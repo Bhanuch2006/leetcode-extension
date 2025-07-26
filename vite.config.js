@@ -6,7 +6,7 @@ export default defineConfig({
       input: {
         popup: 'src/ui/popup.js',
         leetcodecontent: 'src/leetcodeContent.js',
-        
+        leaderboard: 'src/ui/leaderboard.js'
       },
       output: {
         entryFileNames: 'name.js',  

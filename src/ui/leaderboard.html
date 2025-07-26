@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaderboard</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 15px;
+        width: 320px;
+        background-color: #1e1e2f;
+        color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #ffcc70;
+      }
+
+      ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      li {
+        background-color: #2e2e3f;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+      .rank {
+        font-weight: bold;
+        color: #ffcc70;
+      }
+
+      .back-button {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        text-decoration: underline;
+        font-size: 13px;
+        float: left;
+        margin-bottom: 12px;
+        cursor: pointer;
+      }
+      .friend-section {
+        margin-top: 10px;
+        margin-bottom: 16px;
+      }
+
+      .friend-input {
+        width: 90%;
+        padding: 10px 14px;
+        background-color: #2e2e3f;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+        margin-bottom: 8px;
+      }
+
+      .friend-button {
+        padding: 10px 16px;
+        background: linear-gradient(90deg, #ff8a00, #e52e71);
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .friend-button:hover {
+        background: linear-gradient(90deg, #e52e71, #ff8a00);
+      }
+    </style>
+  </head>
+  <body>
+    <button id="backButton" class="back-button">← Back</button>
+    <br />
+    <h2>Leaderboard</h2>
+    <ul id="leaderboardList">
+      <!-- Example users -->
+      <li><span class="rank">#1</span> Shaunak - 320 problems solved</li>
+      <li><span class="rank">#2</span> Arnav - 289 problems solved</li>
+      <li><span class="rank">#3</span> Aadi - 251 problems solved</li>
+      <li><span class="rank">#4</span> Hardik - 219 problems solved</li>
+      <li><span class="rank">#5</span> Ujjwal - 182 problems solved</li>
+    </ul>
+    <div class="friend-section">
+      <input
+        id="friendInput"
+        class="friend-input"
+        type="text"
+        placeholder="Enter friend's LeetCode username"
+      />
+      <button id="addFriendBtn" class="friend-button">➕ Add Friend</button>
+    </div>
+
+    <script src="../../dist/name3.js"></script>
+  </body>
+</html>

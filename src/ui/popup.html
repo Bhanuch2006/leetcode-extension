@@ -110,7 +110,6 @@
     </div>
 
     <div id="profileContainer" style="margin-top: 10px; display: none">
-      <button id="profileButton">👤 View Profile</button>
       <button
         id="logoutBtn"
         style="
@@ -122,13 +121,17 @@
           float: right;
           margin-top: 4px;
           cursor: pointer;
+          text-align: left;
         "
       >
-        Logout
+        ← Logout
       </button>
+      <button id="profileButton">👤 View Profile</button>
 
       <div id="profileDetails" class="info" style="margin-top: 10px"></div>
     </div>
+
+    <button id="leaderboardBtn" style="display: none">🏆 Leaderboard</button>
 
     <div id="hintSection">
       <h2>LeetCode Hint</h2>
