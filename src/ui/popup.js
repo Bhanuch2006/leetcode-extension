@@ -10,27 +10,44 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (isLeetCodeProblem) {
     hintSection.style.display = "block";
+    chrome.storage.sync.get(["lastHints", "lastUrl"], (data) => {
+      if (data.lastHints && data.lastUrl === tab.url) {
+        const hints = parseHintsByMarkers(data.lastHints);
+        renderHints(hints);
+      }
+    });
 
     hintButton.addEventListener("click", () => {
       hintContainer.innerHTML = `<p class="info">⏳ Generating hints, please wait...</p>`;
 
       chrome.tabs.sendMessage(
-        tab.id,
-        { type: "SCRAPE_QUESTION" },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            hintContainer.innerHTML = `<p class="info">❌ Error: ${chrome.runtime.lastError.message}</p>`;
-            return;
-          }
-
-          if (response && response.hints) {
-            const hints = parseHintsByMarkers(response.hints);
-            renderHints(hints);
-          } else {
-            hintContainer.innerHTML = `<p class="info">⚠️ No hints found.</p>`;
-          }
+      tab.id,
+      { type: "SCRAPE_QUESTION" },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          hintContainer.innerHTML = `<p class="info">❌ Error: ${chrome.runtime.lastError.message}</p>`;
+          return;
         }
-      );
+
+        if (response && response.hints) {
+          // Parse and display
+          const hints = parseHintsByMarkers(response.hints);
+          renderHints(hints);
+
+          // Save to chrome.storage.sync
+          chrome.storage.sync.set({
+            lastHints: response.hints,
+            lastUpdated: new Date().toISOString(),
+            lastUrl: tab.url
+          }, () => {
+            console.log("Hints saved to storage.");
+          });
+        } else {
+          hintContainer.innerHTML = `<p class="info">⚠️ No hints found.</p>`;
+        }
+      }
+    );
+
     });
 
     document.getElementById('errorButton').addEventListener("click", () => {
