@@ -1,5 +1,73 @@
-<script type="module" src="./popup.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LeetCode Hint</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 15px;
+        width: 320px;
+        background-color: #1e1e2f;
+        color: #ffffff;
+      }
 
-<div class="container">
-  
-</div>
+      h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #ffcc70;
+      }
+
+      button {
+        padding: 10px 16px;
+        background: linear-gradient(90deg, #ff8a00, #e52e71);
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background: linear-gradient(90deg, #e52e71, #ff8a00);
+      }
+
+      #hintBox {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #2e2e3f;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        border: 1px solid #444;
+      }
+
+      #hintSection,
+      #notProblemSection {
+        display: none;
+      }
+
+      .info {
+        color: #bbb;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="hintSection">
+      <h2>LeetCode Hint</h2>
+      <button id="hintButton">💡 Get Hint</button>
+      <div id="hintBox" class="info">Click the button to get hints...</div>
+    </div>
+
+    <div id="notProblemSection">
+      <h2>⚠️ Not a Problem Page</h2>
+      <p class="info">Please open a LeetCode problem page and try again.</p>
+    </div>
+
+    <script src="../ui/popup.js"></script>
+  </body>
+</html>
