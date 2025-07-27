@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     if (leaderboardList) {
   
-      displaySortedLeaderboard(friendsArray, leaderboardList);
+      displaySortedLeaderboard(friendsArray, leaderboardList, username1);
     } else {
       console.error("No element with id 'leaderboardlist' found.");
     }
@@ -101,10 +101,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
 
-      // 🔥 Add special styling for the current user
-      if (username === username1) {
-        li.classList.add("current-user");
-      }
+     if(username == username1){
+      li.classList.add("current-user");
+      
+     }
 
       li.appendChild(anchor);
       li.appendChild(pointsSpan);
