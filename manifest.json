@@ -43,7 +43,7 @@
       "48": "assets/icon48.png",
       "128": "assets/icon128.png"
     },
-    "default_title": "Your DebugMate",
+    "default_title": "Let's Leet",
     "default_popup": "src/ui/popup.html"
   }
 }

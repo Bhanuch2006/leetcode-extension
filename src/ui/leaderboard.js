@@ -65,12 +65,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     usersWithPoints.sort((a, b) => b.points - a.points);
     leaderboardList.innerHTML = "";
 
+    
     usersWithPoints.forEach(({ username, points }) => {
       const li = document.createElement("li");
 
-      const nameSpan = document.createElement("span");
-      nameSpan.className = "username";
-      nameSpan.textContent = username;
+      // const nameSpan = document.createElement("span");
+      // nameSpan.className = "username";
+      // nameSpan.textContent = username;
+      const anchor = document.createElement("a");
+      anchor.className = "username";
+      anchor.href = `https://leetcode.com/u/${encodeURIComponent(username)}`;
+      anchor.textContent = username;
+      anchor.target = "_blank"; // Open in new tab
+      anchor.style.textDecoration = "none";
+      anchor.style.color = "inherit";
 
       const pointsSpan = document.createElement("span");
       pointsSpan.className = "points";
@@ -98,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         li.classList.add("current-user");
       }
 
-      li.appendChild(nameSpan);
+      li.appendChild(anchor);
       li.appendChild(pointsSpan);
       li.appendChild(removeBtn);
       leaderboardList.appendChild(li);

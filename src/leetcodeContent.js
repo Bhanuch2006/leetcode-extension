@@ -34,7 +34,7 @@ async function fetchLeetCodeProblem(titleSlug) {
 
 //gemini
 async function getGeminiCompletion(prompt) {
-  const apiKey = "AIzaSyD7J5sIsa3H8NveZzZVESYpJd_LQ35Yhc0"; 
+  const apiKey = ""; 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   const payload = {
     contents: [{
