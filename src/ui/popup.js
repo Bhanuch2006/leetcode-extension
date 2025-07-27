@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         👤 <strong>${username}</strong><br/>
         🧩 Solved: ${data.totalSolved}/${data.totalQuestions}<br/>
         🏆 Ranking: #${data.ranking}<br/>
-        Your Points: ${points}
+        🪙 Your Points: ${points}
         `;
     } catch (err) {
         console.error("Error fetching profile:", err);

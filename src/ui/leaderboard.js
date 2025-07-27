@@ -17,6 +17,11 @@ const db = getFirestore(app);
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+  leaderboardList.innerHTML = "<li>Fetching leaderboard...</li>";
+  const friendSection = document.querySelector('.friend-section');
+  if (friendSection) {
+    friendSection.style.display = 'none';  // hide it while loading leaderboard
+  }
 
   function getLeetCodeUsername() {
     return new Promise((resolve) => {
@@ -37,10 +42,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const leaderboardList = document.getElementById("leaderboardList");
     if(!friendsArray.includes(username1)){
       friendsArray.push(username1);
-      awaitupdateDoc(userDocRef,{friends:arrayUnion(username1)});
+      await updateDoc(userDocRef,{friends:arrayUnion(username1)});
     }
     if (leaderboardList) {
-  
+      
       displaySortedLeaderboard(friendsArray, leaderboardList, username1);
     } else {
       console.error("No element with id 'leaderboardlist' found.");
@@ -50,7 +55,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function displaySortedLeaderboard(friendsArray, leaderboardList, username1) {
-  try {
+    const friendSection = document.querySelector('.friend-section');
+    try {
+    
     const userDataPromises = friendsArray.map(async (username) => {
       const response = await fetch(`https://leetcode-stats-api.herokuapp.com/${encodeURIComponent(username)}`);
       if (!response.ok) {
@@ -90,32 +97,61 @@ document.addEventListener("DOMContentLoaded", async () => {
       removeBtn.title = `Remove ${username}`;
 
       removeBtn.addEventListener("click", async () => {
-        const currentUser = await getLeetCodeUsername();
-        const userDocRef = doc(db, "users", currentUser);
-        const docSnap = await getDoc(userDocRef);
-        if (docSnap.exists()) {
-          const currentFriends = docSnap.data().friends || [];
-          const updatedFriends = currentFriends.filter((u) => u !== username);
-          await setDoc(userDocRef, { friends: updatedFriends }, { merge: true });
-          displaySortedLeaderboard(updatedFriends, leaderboardList, username1);
+        const statusMsg = document.getElementById("removeFriendStatus");
+
+        // Show removing message and disable remove button
+        removeBtn.disabled = true;
+        if (statusMsg) {
+          statusMsg.innerHTML = `Removing user <b>${username}</b> ...`;
+        }
+
+        try {
+          const currentUser = await getLeetCodeUsername();
+          const userDocRef = doc(db, "users", currentUser);
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+            const currentFriends = docSnap.data().friends || [];
+            const updatedFriends = currentFriends.filter((u) => u !== username);
+            await setDoc(userDocRef, { friends: updatedFriends }, { merge: true });
+            displaySortedLeaderboard(updatedFriends, leaderboardList, username1);
+            if (statusMsg) statusMsg.innerHTML = `User <b>${username}</b> removed successfully!`;
+          } else {
+            if (statusMsg) statusMsg.textContent = "Current user document does not exist.";
+          }
+        } catch (error) {
+          console.error(error);
+          if (statusMsg) statusMsg.textContent = "Error removing user.";
+        } finally {
+          removeBtn.disabled = false;
+          // Clear the status message after 3 seconds
+          setTimeout(() => {
+            if (statusMsg) statusMsg.textContent = "";
+          }, 3000);
         }
       });
 
-     if(username == username1){
-      li.classList.add("current-user");
-      
-     }
+      if(username == username1){
+        li.classList.add("current-user");
+        
+      }
 
       li.appendChild(anchor);
       li.appendChild(pointsSpan);
-      li.appendChild(removeBtn);
+      if(username != username1){  
+        li.appendChild(removeBtn);
+      }
+        
       leaderboardList.appendChild(li);
     });
-  } catch (error) {
-    console.error("Error building leaderboard:", error);
-    leaderboardList.innerHTML = "<li>Error loading leaderboard.</li>";
+    if (friendSection) {
+      friendSection.style.display = 'block';
+    }
+    } catch (error) {
+      console.error("Error building leaderboard:", error);
+      leaderboardList.innerHTML = "<li>Error loading leaderboard.</li>";
+    }
   }
-}
 
 
 
@@ -132,27 +168,50 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   document.getElementById("addFriendBtn").addEventListener("click", async () => {
-    const friendName = document.getElementById("friendInput").value.trim();
+    const addBtn = document.getElementById("addFriendBtn");
+    const friendInput = document.getElementById("friendInput");
+    const statusMsg = document.getElementById("addFriendStatus"); // Create this element in your HTML
+
+    const friendName = friendInput.value.trim();
     if (friendName) {
-      
-      const username = await getLeetCodeUsername();
-      if(!username){
-        return;
+      // Show adding user message and disable inputs
+      addBtn.disabled = true;
+      friendInput.disabled = true;
+      if (statusMsg) {
+        statusMsg.textContent = "Adding user...";
       }
-      const userDocRef = doc(db, "users", username);
-      const docSnap = await getDoc(userDocRef);
-      if(docSnap.exists()){
-        await updateDoc(userDocRef, {
-          friends: arrayUnion(friendName)
-        });
-        const updatedDocSnap = await getDoc(userDocRef);
-        const updatedFriends = updatedDocSnap.data().friends || [];
-        displaySortedLeaderboard(updatedFriends, leaderboardList);
-      }else{
-        console.log("Username does not exist");
-        
+
+      try {
+        const username = await getLeetCodeUsername();
+        if (!username) {
+          if (statusMsg) statusMsg.textContent = "Current username not found.";
+          return;
+        }
+        const userDocRef = doc(db, "users", username);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          await updateDoc(userDocRef, {
+            friends: arrayUnion(friendName)
+          });
+          const updatedDocSnap = await getDoc(userDocRef);
+          const updatedFriends = updatedDocSnap.data().friends || [];
+          displaySortedLeaderboard(updatedFriends, leaderboardList, username);
+          if (statusMsg) statusMsg.textContent = "User added successfully!";
+        } else {
+          if (statusMsg) statusMsg.textContent = "Username does not exist.";
+        }
+      } catch (err) {
+        console.error(err);
+        if (statusMsg) statusMsg.textContent = "Error adding user.";
+      } finally {
+        addBtn.disabled = false;
+        friendInput.disabled = false;
+        friendInput.value = "";
+        // Optionally clear status message after some time
+        setTimeout(() => {
+          if (statusMsg) statusMsg.textContent = "";
+        }, 3000);
       }
-      document.getElementById("friendInput").value = "";
     }
   });
 });
