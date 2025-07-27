@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const data = docSnap.data();
     const friendsArray = data.friends || [];  // Default to empty array if no friends field
     const leaderboardList = document.getElementById("leaderboardList");
+    if(!friendsArray.includes(username1)){
+      friendsArray.push(username1);
+      awaitupdateDoc(userDocRef,{friends:arrayUnion(username1)});
+    }
     if (leaderboardList) {
   
       displaySortedLeaderboard(friendsArray, leaderboardList);
@@ -45,10 +49,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log(`User document for ${username1} does not exist.`);
   }
 
-  async function displaySortedLeaderboard(friendsArray, leaderboardList) {
+  async function displaySortedLeaderboard(friendsArray, leaderboardList, username1) {
   try {
-    // Map to array of promises fetching each user's data
-      const userDataPromises = friendsArray.map(async (username) => {
+    const userDataPromises = friendsArray.map(async (username) => {
       const response = await fetch(`https://leetcode-stats-api.herokuapp.com/${encodeURIComponent(username)}`);
       if (!response.ok) {
         throw new Error(`Network response was not ok for user ${username}`);
@@ -58,19 +61,46 @@ document.addEventListener("DOMContentLoaded", async () => {
       return { username, points };
     });
 
-    // Wait for all fetches to resolve
     const usersWithPoints = await Promise.all(userDataPromises);
-
-    // Sort descending by points
     usersWithPoints.sort((a, b) => b.points - a.points);
-
-    // Clear existing list
     leaderboardList.innerHTML = "";
 
-    // Append sorted users to the list
     usersWithPoints.forEach(({ username, points }) => {
       const li = document.createElement("li");
-      li.textContent = `${username} ${points}`;
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "username";
+      nameSpan.textContent = username;
+
+      const pointsSpan = document.createElement("span");
+      pointsSpan.className = "points";
+      pointsSpan.textContent = points;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-btn";
+      removeBtn.textContent = "−";
+      removeBtn.title = `Remove ${username}`;
+
+      removeBtn.addEventListener("click", async () => {
+        const currentUser = await getLeetCodeUsername();
+        const userDocRef = doc(db, "users", currentUser);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          const currentFriends = docSnap.data().friends || [];
+          const updatedFriends = currentFriends.filter((u) => u !== username);
+          await setDoc(userDocRef, { friends: updatedFriends }, { merge: true });
+          displaySortedLeaderboard(updatedFriends, leaderboardList, username1);
+        }
+      });
+
+      // 🔥 Add special styling for the current user
+      if (username === username1) {
+        li.classList.add("current-user");
+      }
+
+      li.appendChild(nameSpan);
+      li.appendChild(pointsSpan);
+      li.appendChild(removeBtn);
       leaderboardList.appendChild(li);
     });
   } catch (error) {
@@ -78,6 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     leaderboardList.innerHTML = "<li>Error loading leaderboard.</li>";
   }
 }
+
 
 
 
@@ -104,15 +135,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       const docSnap = await getDoc(userDocRef);
       if(docSnap.exists()){
         await updateDoc(userDocRef, {
-        friends: arrayUnion(friendName)
-      });
+          friends: arrayUnion(friendName)
+        });
+        const updatedDocSnap = await getDoc(userDocRef);
+        const updatedFriends = updatedDocSnap.data().friends || [];
+        displaySortedLeaderboard(updatedFriends, leaderboardList);
       }else{
         console.log("Username does not exist");
         
       }
-      
-      
-      
       document.getElementById("friendInput").value = "";
     }
   });
