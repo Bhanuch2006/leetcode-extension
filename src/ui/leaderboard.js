@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const data = docSnap.data();
     const friendsArray = data.friends || [];  // Default to empty array if no friends field
     const leaderboardList = document.getElementById("leaderboardList");
+    if(!friendsArray.includes(username1)){
+      friendsArray.push(username1);
+      awaitupdateDoc(userDocRef,{friends:arrayUnion(username1)});
+    }
     if (leaderboardList) {
   
       displaySortedLeaderboard(friendsArray, leaderboardList);
@@ -127,8 +131,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const docSnap = await getDoc(userDocRef);
       if(docSnap.exists()){
         await updateDoc(userDocRef, {
-        friends: arrayUnion(friendName)
-      });
+          friends: arrayUnion(friendName)
+        });
+        const updatedDocSnap = await getDoc(userDocRef);
+        const updatedFriends = updatedDocSnap.data().friends || [];
+        displaySortedLeaderboard(updatedFriends, leaderboardList);
       }else{
         console.log("Username does not exist");
         
