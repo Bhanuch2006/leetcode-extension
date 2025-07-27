@@ -73,16 +73,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     leaderboardList.innerHTML = "";
 
     
-    usersWithPoints.forEach(({ username, points }) => {
+    usersWithPoints.forEach(({ username, points ,error},index) => {
       const li = document.createElement("li");
-
+      let trophyEmoji = "";
+      if (index === 0) trophyEmoji = "🥇"; // Gold medal
+      else if (index === 1) trophyEmoji = "🥈"; // Silver medal
+      else if (index === 2) trophyEmoji = "🥉"; // Bronze medal
       // const nameSpan = document.createElement("span");
       // nameSpan.className = "username";
       // nameSpan.textContent = username;
       const anchor = document.createElement("a");
       anchor.className = "username";
       anchor.href = `https://leetcode.com/u/${encodeURIComponent(username)}`;
-      anchor.textContent = username;
+      anchor.innerHTML = trophyEmoji ? `${trophyEmoji} ${username}` : username;
       anchor.target = "_blank"; // Open in new tab
       anchor.style.textDecoration = "none";
       anchor.style.color = "inherit";
@@ -90,6 +93,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       const pointsSpan = document.createElement("span");
       pointsSpan.className = "points";
       pointsSpan.textContent = points;
+      pointsSpan.textContent = `${points} 🪙`;
+
+      if (index < 3) {
+        anchor.innerHTML = `${trophyEmoji} ${username}`;
+      } else {
+        anchor.innerHTML = `   ${index + 1}.  ${username}`;
+      }
+
+      
+
+      if (error) {
+        pointsSpan.textContent += " ⚠️";
+        pointsSpan.title = "Could not fetch stats for this user.";
+      }
 
       const removeBtn = document.createElement("button");
       removeBtn.className = "remove-btn";

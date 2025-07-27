@@ -117,14 +117,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await response.json();
         console.log("API response data:", data);
         const points = 1 * data.easySolved + (3*data.mediumSolved) + (7*data.hardSolved);
+        const info = document.getElementById("profileDetails");
         
-        // Show relevant info in UI here, e.g.
-        profileDetails.innerHTML = `
-        👤 <strong>${username}</strong><br/>
+        
+        info.innerHTML = "";
+        const content = document.createElement("div");
+        const profile = `
+        👤 <strong>
+          <a 
+            href="https://leetcode.com/u/${encodeURIComponent(username)}" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style="color: inherit; text-decoration: none; cursor: pointer;"
+          >
+            ${username}
+          </a>
+        </strong><br/>
         🧩 Solved: ${data.totalSolved}/${data.totalQuestions}<br/>
         🏆 Ranking: #${data.ranking}<br/>
         🪙 Your Points: ${points}
-        `;
+      `;
+      content.innerHTML = profile;
+
+
+      info.appendChild(content);
+        
     } catch (err) {
         console.error("Error fetching profile:", err);
         profileDetails.innerHTML = "❌ Error loading profile.";
@@ -200,7 +217,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
             console.log("[Popup] LeetCode code:", response.code);
-            errorContainer.innerHTML = `<p class="info">Errors: ${response.code} </p>` ;
+            const details = document.createElement("details");
+            const summary = document.createElement("summary");
+            details.appendChild(summary);
+            summary.textContent = `Show Suggestions`;
+            const content = document.createElement("div");
+            content.textContent = response.code;
+
+            details.appendChild(summary);
+            details.appendChild(content);
+            errorContainer.innerHTML = "";
+            errorContainer.appendChild(details);
             });
         });
     });
@@ -227,12 +254,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   function renderHints(hints) {
     hintContainer.innerHTML = ""; // Clear loading
     hints.forEach((hint, index) => {
-      const details = document.createElement("details");
-      const summary = document.createElement("summary");
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    
+    details.appendChild(summary);
+
       summary.textContent = `Hint ${index + 1}`;
       const content = document.createElement("div");
       content.textContent = hint;
       details.appendChild(summary);
+
+
       details.appendChild(content);
       hintContainer.appendChild(details);
     });
