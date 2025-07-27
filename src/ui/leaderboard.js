@@ -59,25 +59,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Wait for all fetches to resolve
-    const usersWithPoints = await Promise.all(userDataPromises);
+     const usersWithPoints = await Promise.all(userDataPromises);
+      usersWithPoints.sort((a, b) => b.points - a.points);
+      leaderboardList.innerHTML = "";
 
-    // Sort descending by points
-    usersWithPoints.sort((a, b) => b.points - a.points);
+      usersWithPoints.forEach(({ username, points }) => {
+        const li = document.createElement("li");
 
-    // Clear existing list
-    leaderboardList.innerHTML = "";
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "username";
+        nameSpan.textContent = username;
 
-    // Append sorted users to the list
-    usersWithPoints.forEach(({ username, points }) => {
-      const li = document.createElement("li");
-      li.textContent = `${username} ${points}`;
-      leaderboardList.appendChild(li);
-    });
-  } catch (error) {
-    console.error("Error building leaderboard:", error);
-    leaderboardList.innerHTML = "<li>Error loading leaderboard.</li>";
+        const pointsSpan = document.createElement("span");
+        pointsSpan.className = "points";
+        pointsSpan.textContent = points;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "remove-btn";
+        removeBtn.textContent = "−";
+        removeBtn.title = `Remove ${username}`;
+
+        removeBtn.addEventListener("click", async () => {
+          const currentUser = await getLeetCodeUsername();
+          const userDocRef = doc(db, "users", currentUser);
+          const docSnap = await getDoc(userDocRef);
+          if (docSnap.exists()) {
+            const currentFriends = docSnap.data().friends || [];
+            const updatedFriends = currentFriends.filter((u) => u !== username);
+            await setDoc(userDocRef, { friends: updatedFriends }, { merge: true });
+            displaySortedLeaderboard(updatedFriends, leaderboardList);
+          }
+        });
+
+        li.appendChild(nameSpan);
+        li.appendChild(pointsSpan);
+        li.appendChild(removeBtn);
+        leaderboardList.appendChild(li);
+      });
+    } catch (error) {
+      console.error("Error building leaderboard:", error);
+      leaderboardList.innerHTML = "<li>Error loading leaderboard.</li>";
+    }
   }
-}
 
 
 
@@ -110,9 +133,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Username does not exist");
         
       }
-      
-      
-      
       document.getElementById("friendInput").value = "";
     }
   });
