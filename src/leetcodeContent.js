@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         const slug = getQuestionSlugFromURL();
         const question = await fetchLeetCodeProblem(slug);
         const prompt = `Given below is the implementation of the leetcode problemdone by the user. There are most likely logical error in it 
-        In one short paragraph explain the errors as a computer science fellow student, in proper grammer and in short way that you think are possible regarding logical errors with no text formating including no bold
+        In one short paragraph explain the errors as a computer science fellow student, in proper grammer and in short way that you think are possible regarding logical errors with no text formating including no bold but be a bit formal 
         ${event.data.code}
 
             For the following problem: Title: ${question.title} \nDescription: ${question.content}`;
@@ -126,7 +126,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     
     window.addEventListener("message", handleMessage);
 
-    return true;  // IMPORTANT: keep message channel open for async sendResponse
+    return true;  // keeping message channel open for async sendResponse
   }
 });
 

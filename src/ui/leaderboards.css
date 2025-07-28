@@ -1,0 +1,112 @@
+body {
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 15px;
+        width: 320px;
+        background-color: #1e1e2f;
+        color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #ffcc70;
+      }
+
+      ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      li {
+        background-color: #2e2e3f;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ownusername {
+        flex-grow: 1;
+        color: lightgreen;
+      }
+      .username {
+        flex-grow: 1;
+        
+      }
+
+      .points {
+        margin-right: 10px;
+        color: #ffcc70;
+      }
+
+      .remove-btn {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .rank {
+        font-weight: bold;
+        color: #ffcc70;
+      }
+
+      .back-button {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        text-decoration: underline;
+        font-size: 13px;
+        float: left;
+        margin-bottom: 12px;
+        cursor: pointer;
+      }
+      .friend-section {
+        margin-top: 10px;
+        margin-bottom: 16px;
+      }
+
+      .friend-input {
+        width: 90%;
+        padding: 10px 14px;
+        background-color: #2e2e3f;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+        margin-bottom: 8px;
+      }
+
+      .friend-button {
+        padding: 10px 16px;
+        background: linear-gradient(90deg, #ff8a00, #e52e71);
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .friend-button:hover {
+        background: linear-gradient(90deg, #e52e71, #ff8a00);
+      }
+
+      .current-user{
+        color: lightgreen;
+      }
+
+      .addFreind{
+        color:#ffcc70;
+        
+      }
+
+      

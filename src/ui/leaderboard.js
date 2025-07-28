@@ -187,11 +187,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("addFriendBtn").addEventListener("click", async () => {
     const addBtn = document.getElementById("addFriendBtn");
     const friendInput = document.getElementById("friendInput");
-    const statusMsg = document.getElementById("addFriendStatus"); // Create this element in your HTML
-
+    const statusMsg = document.getElementById("addFriendStatus"); 
     const friendName = friendInput.value.trim();
     if (friendName) {
-      // Show adding user message and disable inputs
+    
       addBtn.disabled = true;
       friendInput.disabled = true;
       if (statusMsg) {
@@ -224,10 +223,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         addBtn.disabled = false;
         friendInput.disabled = false;
         friendInput.value = "";
-        // Optionally clear status message after some time
+        
         setTimeout(() => {
           if (statusMsg) statusMsg.textContent = "";
-        }, 3000);
+        }, 2000);
       }
     }
   });
